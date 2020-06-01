@@ -147,11 +147,14 @@ class Player {
 
       const ray_dist = ray_hit[2];
       const height = 400 / ray_dist;
+      ctx.globalAlpha = Math.max(0, 1 - ray_dist ** 2 / (ray_len - 1) ** 2);
 
       ctx.beginPath();
       ctx.moveTo(400 + i, 200 - height / 2);
       ctx.lineTo(400 + i, 200 + height / 2);
       ctx.stroke();
+
+      ctx.globalAlpha = 1;
     }
   }
 }
