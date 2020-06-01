@@ -12,6 +12,9 @@ const default_map = [
 ];
 
 class Grid {
+  width = 10;
+  height = 10;
+
   constructor(map = default_map) {
     this.map = map;
   }
@@ -22,24 +25,24 @@ class Grid {
   }
 
   draw(ctx) {
-    for (let y = 0; y < this.map.length; y++) {
-      for (let x = 0; x < this.map[y].length; x++) {
+    for (let y = 0; y < this.height; y++) {
+      for (let x = 0; x < this.width; x++) {
         ctx.fillStyle = this.map[y][x] ? "#aa66bb" : "#ddd";
-        ctx.fillRect(x * 40, y * 40, 40, 40);
+        ctx.fillRect(x * cell_size, y * cell_size, cell_size, cell_size);
       }
     }
 
     ctx.strokeStyle = "#000";
-    for (let y = 0; y < this.map.length; y++) {
+    for (let y = 0; y < this.height; y++) {
       ctx.beginPath();
-      ctx.moveTo(0, y * 40);
-      ctx.lineTo(400, y * 40);
+      ctx.moveTo(0, y * cell_size);
+      ctx.lineTo(screen_height, y * cell_size);
       ctx.stroke();
     }
-    for (let x = 0; x < this.map[0].length; x++) {
+    for (let x = 0; x < this.width; x++) {
       ctx.beginPath();
-      ctx.moveTo(x * 40, 0);
-      ctx.lineTo(x * 40, 400);
+      ctx.moveTo(x * cell_size, 0);
+      ctx.lineTo(x * cell_size, screen_width);
       ctx.stroke();
     }
   }

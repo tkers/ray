@@ -1,3 +1,7 @@
+const screen_height = 400;
+const screen_width = 400;
+const cell_size = 40;
+
 let grid, player;
 
 const draw = (ctx, dt) => {

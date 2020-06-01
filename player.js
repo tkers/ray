@@ -1,14 +1,13 @@
 const fov = 60;
-const fov_res = 400;
 const ray_len = 18;
 const fog_dist = ray_len - 2;
 
 class Player {
   turnSpeed = deg2rad(360);
-  walkSpeed = 100;
+  walkSpeed = 2.5;
 
-  x = 50;
-  y = 50;
+  x = 1.5;
+  y = 1.5;
   angle = 0;
 
   k_up = false;
@@ -52,14 +51,12 @@ class Player {
     const newX = this.x + walkDir * Math.cos(this.angle) * dt * this.walkSpeed;
     const newY = this.y + walkDir * Math.sin(this.angle) * dt * this.walkSpeed;
 
-    if (!this.grid.getCell(Math.floor(newX / 40), Math.floor(this.y / 40)))
-      this.x = newX;
-    if (!this.grid.getCell(Math.floor(this.x / 40), Math.floor(newY / 40)))
-      this.y = newY;
+    if (!this.grid.getCell(Math.floor(newX), Math.floor(this.y))) this.x = newX;
+    if (!this.grid.getCell(Math.floor(this.x), Math.floor(newY))) this.y = newY;
 
     this.angle = this.angle % deg2rad(360);
-    this.x = Math.min(Math.max(0, this.x), 400);
-    this.y = Math.min(Math.max(0, this.y), 400);
+    this.x = Math.min(Math.max(0, this.x), this.grid.width);
+    this.y = Math.min(Math.max(0, this.y), this.grid.height);
   }
 
   cast(relativeAngle) {
@@ -75,8 +72,8 @@ class Player {
     const vRound = vDir > 0 ? Math.floor : Math.ceil;
 
     const path = [];
-    let nowX = this.x / 40;
-    let nowY = this.y / 40;
+    let nowX = this.x;
+    let nowY = this.y;
     let nowDist = 0;
 
     while (true) {
@@ -137,22 +134,22 @@ class Player {
   draw(ctx) {
     ctx.fillStyle = "#3366aa";
     ctx.beginPath();
-    ctx.arc(this.x, this.y, 5, 0, deg2rad(360));
+    ctx.arc(this.x * cell_size, this.y * cell_size, 5, 0, deg2rad(360));
     ctx.fill();
 
-    for (let i = 0; i < fov_res; i++) {
-      const a = (i * 2) / fov_res - 1;
-      const ray_angle = deg2rad(-fov / 2 + fov * (i / fov_res));
+    for (let i = 0; i < screen_width; i++) {
+      const a = (i * 2) / screen_width - 1;
+      const ray_angle = deg2rad(-fov / 2 + fov * (i / screen_width));
 
       const ray = this.cast(ray_angle);
       const ray_hit = ray.find(s => s[3]) || ray[ray.length - 1];
-      const ray_x = ray_hit[0] * 40;
-      const ray_y = ray_hit[1] * 40;
+      const ray_x = ray_hit[0];
+      const ray_y = ray_hit[1];
 
       ctx.strokeStyle = "#333";
       ctx.beginPath();
-      ctx.moveTo(this.x, this.y);
-      ctx.lineTo(ray_x, ray_y);
+      ctx.moveTo(this.x * cell_size, this.y * cell_size);
+      ctx.lineTo(ray_x * cell_size, ray_y * cell_size);
       ctx.stroke();
 
       const ray_dist = ray_hit[2];
@@ -160,10 +157,10 @@ class Player {
 
       const fog = Math.min(1, ray_dist ** 2 / fog_dist ** 2);
 
-      const height = 400 / ray_dist;
+      const height = screen_height / ray_dist;
       const colX = 400 + i;
-      const colTop = 200 - height / 2;
-      const colBottom = 200 + height / 2;
+      const colTop = screen_height / 2 - height / 2;
+      const colBottom = screen_height / 2 + height / 2;
 
       ctx.globalAlpha = 1;
       ctx.strokeStyle = "#552277";
