@@ -96,16 +96,19 @@ class Player {
       let stepX, stepY, stepDist;
       let gridOffX = 0;
       let gridOffY = 0;
+      let shadow;
       if (hStepDist < vStepDist) {
         stepX = hStepX;
         stepY = hStepY;
         stepDist = hStepDist;
         gridOffX = hDir < 0 ? 1 : 0;
+        shadow = hDir < 0 ? 1 : 0.3;
       } else {
         stepX = vStepX;
         stepY = vStepY;
         stepDist = vStepDist;
         gridOffY = vDir < 0 ? 1 : 0;
+        shadow = vDir < 0 ? 1 : 0.6;
       }
 
       nowX += stepX;
@@ -119,7 +122,7 @@ class Player {
       const gridY = Math.floor(nowY - gridOffY);
       const hit = this.grid.getCell(gridX, gridY);
 
-      path.push([nowX, nowY, nowDist * Math.cos(relativeAngle), hit]);
+      path.push([nowX, nowY, nowDist * Math.cos(relativeAngle), hit, shadow]);
     }
 
     return path;
@@ -146,12 +149,27 @@ class Player {
       ctx.stroke();
 
       const ray_dist = ray_hit[2];
-      const height = 400 / ray_dist;
-      ctx.globalAlpha = Math.max(0, 1 - ray_dist ** 2 / (ray_len - 1) ** 2);
+      const ray_shadow = ray_hit[4];
 
+      const fog = Math.max(0, 1 - ray_dist ** 2 / (ray_len - 1) ** 2);
+
+      const height = 400 / ray_dist;
+      const colX = 400 + i;
+      const colTop = 200 - height / 2;
+      const colBottom = 200 + height / 2;
+
+      ctx.globalAlpha = fog;
+      ctx.strokeStyle = "#552277";
       ctx.beginPath();
-      ctx.moveTo(400 + i, 200 - height / 2);
-      ctx.lineTo(400 + i, 200 + height / 2);
+      ctx.moveTo(colX, colTop);
+      ctx.lineTo(colX, colBottom);
+      ctx.stroke();
+
+      ctx.globalAlpha = (ray_shadow / 2) * fog;
+      ctx.strokeStyle = "#000";
+      ctx.beginPath();
+      ctx.moveTo(colX, colTop);
+      ctx.lineTo(colX, colBottom);
       ctx.stroke();
 
       ctx.globalAlpha = 1;
