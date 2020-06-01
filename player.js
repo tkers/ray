@@ -48,8 +48,13 @@ class Player {
     const walkDir = (this.k_up ? 1 : 0) + (this.k_down ? -1 : 0);
 
     this.angle += turnDir * dt * this.turnSpeed;
-    this.x += walkDir * Math.cos(this.angle) * dt * this.walkSpeed;
-    this.y += walkDir * Math.sin(this.angle) * dt * this.walkSpeed;
+    const newX = this.x + walkDir * Math.cos(this.angle) * dt * this.walkSpeed;
+    const newY = this.y + walkDir * Math.sin(this.angle) * dt * this.walkSpeed;
+
+    if (!this.grid.getCell(Math.floor(newX / 40), Math.floor(this.y / 40)))
+      this.x = newX;
+    if (!this.grid.getCell(Math.floor(this.x / 40), Math.floor(newY / 40)))
+      this.y = newY;
 
     this.angle = this.angle % deg2rad(360);
     this.x = Math.min(Math.max(0, this.x), 400);
