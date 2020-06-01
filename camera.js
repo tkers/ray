@@ -73,9 +73,15 @@ class Camera {
 
       const gridX = Math.floor(nowX - gridOffX);
       const gridY = Math.floor(nowY - gridOffY);
-      const hit = this.grid.getCell(gridX, gridY);
+      const height = this.grid.getCell(gridX, gridY);
 
-      path.push([nowX, nowY, nowDist * Math.cos(relativeAngle), hit, shadow]);
+      path.push([
+        nowX,
+        nowY,
+        nowDist * Math.cos(relativeAngle),
+        height,
+        shadow
+      ]);
     }
 
     return path;
@@ -96,10 +102,12 @@ class Camera {
       const ray_angle = Math.atan2(a, focal_length);
 
       const ray = this.cast(x, y, angle, ray_angle);
-      const ray_hit = ray.find(s => s[3]) || ray[ray.length - 1];
+      const ray_hit = ray.find(s => s[3] > 0) || ray[ray.length - 1];
+
       const ray_x = ray_hit[0];
       const ray_y = ray_hit[1];
 
+      // show rays on 2d view
       if (i % 10 === 0) {
         ctx.strokeStyle = "#333";
         ctx.beginPath();
@@ -108,15 +116,16 @@ class Camera {
         ctx.stroke();
       }
 
+      const ray_h = ray_hit[3];
       const ray_dist = ray_hit[2];
       const ray_shadow = ray_hit[4];
 
       const fog = Math.min(1, ray_dist ** 2 / fog_dist ** 2);
 
-      const height = screen_height / ray_dist;
+      const maxheight = screen_height / ray_dist;
       const colX = xoffset_3d + i;
-      const colTop = screen_height / 2 - height / 2;
-      const colBottom = screen_height / 2 + height / 2;
+      const colBottom = screen_height / 2 + maxheight / 2;
+      const colTop = colBottom - maxheight * ray_h;
 
       ctx.globalAlpha = 1;
       ctx.strokeStyle = "#552277";
