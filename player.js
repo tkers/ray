@@ -94,14 +94,18 @@ class Player {
 
       // closest grid intersect
       let stepX, stepY, stepDist;
+      let gridOffX = 0;
+      let gridOffY = 0;
       if (hStepDist < vStepDist) {
         stepX = hStepX;
         stepY = hStepY;
         stepDist = hStepDist;
+        gridOffX = hDir < 0 ? 1 : 0;
       } else {
         stepX = vStepX;
         stepY = vStepY;
         stepDist = vStepDist;
+        gridOffY = vDir < 0 ? 1 : 0;
       }
 
       nowX += stepX;
@@ -111,7 +115,11 @@ class Player {
       // done when max distance is reached
       if (nowDist > ray_len) break;
 
-      path.push([nowX, nowY]);
+      const gridX = Math.floor(nowX - gridOffX);
+      const gridY = Math.floor(nowY - gridOffY);
+      const hit = this.grid.getCell(gridX, gridY);
+
+      path.push([nowX, nowY, nowDist * Math.cos(relativeAngle), hit]);
     }
 
     return path;
@@ -128,15 +136,10 @@ class Player {
       const ray_angle = deg2rad(-fov / 2 + fov * (i / fov_res));
 
       const ray = this.cast(ray_angle);
-      ray.forEach(([sx, sy, dist, hit]) => {
-        ctx.fillStyle = hit ? "#f0a" : "#aa2288";
-        ctx.beginPath();
-        ctx.arc(sx * 40, sy * 40, 2, 0, deg2rad(360));
-        ctx.fill();
-      });
+      const ray_hit = ray.find(s => s[3]) || ray[ray.length - 1];
+      const ray_x = ray_hit[0] * 40;
+      const ray_y = ray_hit[1] * 40;
 
-      const ray_x = this.x + Math.cos(this.angle + ray_angle) * ray_len * 40;
-      const ray_y = this.y + Math.sin(this.angle + ray_angle) * ray_len * 40;
       ctx.beginPath();
       ctx.moveTo(this.x, this.y);
       ctx.lineTo(ray_x, ray_y);

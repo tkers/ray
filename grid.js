@@ -16,6 +16,11 @@ class Grid {
     this.map = map;
   }
 
+  getCell(x, y) {
+    const row = this.map[y];
+    return row && !!row[x];
+  }
+
   draw(ctx) {
     for (let y = 0; y < this.map.length; y++) {
       for (let x = 0; x < this.map[y].length; x++) {
