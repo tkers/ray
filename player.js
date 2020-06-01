@@ -1,6 +1,6 @@
 const fov = 60;
 const fov_res = 400;
-const ray_len = 5;
+const ray_len = 10;
 
 class Player {
   turnSpeed = deg2rad(360);
