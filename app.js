@@ -12,7 +12,7 @@ const draw = (ctx, dt) => {
 window.addEventListener("load", () => {
   const canvas = document.getElementById("root");
   const ctx = canvas.getContext("2d");
-  resizeCanvas(canvas, 400, 400);
+  resizeCanvas(canvas, 800, 400);
 
   grid = new Grid();
   player = new Player(grid);

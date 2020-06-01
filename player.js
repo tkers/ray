@@ -1,5 +1,5 @@
 const fov = 60;
-const fov_res = 16;
+const fov_res = 400;
 const ray_len = 5;
 
 class Player {
@@ -143,6 +143,14 @@ class Player {
       ctx.beginPath();
       ctx.moveTo(this.x, this.y);
       ctx.lineTo(ray_x, ray_y);
+      ctx.stroke();
+
+      const ray_dist = ray_hit[2];
+      const height = 400 / ray_dist;
+
+      ctx.beginPath();
+      ctx.moveTo(400 + i, 200 - height / 2);
+      ctx.lineTo(400 + i, 200 + height / 2);
       ctx.stroke();
     }
   }
