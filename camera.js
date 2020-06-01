@@ -102,53 +102,58 @@ class Camera {
       const ray_angle = Math.atan2(a, focal_length);
 
       const ray = this.cast(x, y, angle, ray_angle);
-      const ray_hit = ray.find(s => s[3] > 0) || ray[ray.length - 1];
+      const hits = [];
+      let lastHeight = 0;
+      ray.forEach(s => {
+        if (s[3] > lastHeight) {
+          hits.push(s);
+          lastHeight = s[3];
+        }
+      });
 
-      const ray_x = ray_hit[0];
-      const ray_y = ray_hit[1];
+      let lastTop = Infinity;
+      hits.forEach(([ray_x, ray_y, ray_dist, ray_h, ray_shadow]) => {
+        // show rays on 2d view
+        if (i % 10 === 0) {
+          ctx.strokeStyle = "#333";
+          ctx.beginPath();
+          ctx.moveTo(x * cell_size, y * cell_size);
+          ctx.lineTo(ray_x * cell_size, ray_y * cell_size);
+          ctx.stroke();
+        }
 
-      // show rays on 2d view
-      if (i % 10 === 0) {
-        ctx.strokeStyle = "#333";
+        const maxheight = screen_height / ray_dist;
+        const colX = xoffset_3d + i;
+        const colRealBottom = screen_height / 2 + maxheight / 2;
+        const colRealTop = colRealBottom - maxheight * ray_h;
+
+        const colBottom = Math.min(lastTop, colRealBottom);
+        const colTop = Math.min(colRealTop, colBottom);
+        lastTop = colTop;
+
+        ctx.globalAlpha = 1;
+        ctx.strokeStyle = "#552277";
         ctx.beginPath();
-        ctx.moveTo(x * cell_size, y * cell_size);
-        ctx.lineTo(ray_x * cell_size, ray_y * cell_size);
+        ctx.moveTo(colX, colTop);
+        ctx.lineTo(colX, colBottom);
         ctx.stroke();
-      }
 
-      const ray_h = ray_hit[3];
-      const ray_dist = ray_hit[2];
-      const ray_shadow = ray_hit[4];
+        ctx.globalAlpha = ray_shadow / 2;
+        ctx.strokeStyle = "#000";
+        ctx.beginPath();
+        ctx.moveTo(colX, colTop);
+        ctx.lineTo(colX, colBottom);
+        ctx.stroke();
 
-      const fog = Math.min(1, ray_dist ** 2 / fog_dist ** 2);
+        ctx.globalAlpha = Math.min(1, ray_dist ** 2 / fog_dist ** 2);
+        ctx.strokeStyle = "#fff";
+        ctx.beginPath();
+        ctx.moveTo(colX, colTop);
+        ctx.lineTo(colX, colBottom);
+        ctx.stroke();
 
-      const maxheight = screen_height / ray_dist;
-      const colX = xoffset_3d + i;
-      const colBottom = screen_height / 2 + maxheight / 2;
-      const colTop = colBottom - maxheight * ray_h;
-
-      ctx.globalAlpha = 1;
-      ctx.strokeStyle = "#552277";
-      ctx.beginPath();
-      ctx.moveTo(colX, colTop);
-      ctx.lineTo(colX, colBottom);
-      ctx.stroke();
-
-      ctx.globalAlpha = ray_shadow / 2;
-      ctx.strokeStyle = "#000";
-      ctx.beginPath();
-      ctx.moveTo(colX, colTop);
-      ctx.lineTo(colX, colBottom);
-      ctx.stroke();
-
-      ctx.globalAlpha = fog;
-      ctx.strokeStyle = "#fff";
-      ctx.beginPath();
-      ctx.moveTo(colX, colTop);
-      ctx.lineTo(colX, colBottom);
-      ctx.stroke();
-
-      ctx.globalAlpha = 1;
+        ctx.globalAlpha = 1;
+      });
     }
   }
 }

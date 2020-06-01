@@ -2,12 +2,12 @@ const default_map = [
   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
   [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
   [1, 0.5, 1, 1, 1, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 1, 0, 0, 1, 1, 1],
+  [1, 0, 0, 0, 1, 0, 0, 0.6, 0.8, 1],
   [1, 0, 0, 0, 1, 0, 0, 0, 0, 1],
   [1, 0, 0, 1, 1, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 1, 1, 0, 1],
-  [1, 1, 1, 0, 0, 0, 1, 0, 0, 1],
-  [1, 1, 1, 0, 0, 0, 1, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0.7, 0.7, 0, 1],
+  [1, 1, 1, 0, 0, 0, 0.5, 0, 0, 1],
+  [1, 1, 1, 0, 0, 0, 0.5, 0, 0, 1],
   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ];
 
@@ -27,10 +27,12 @@ class Grid {
     for (let y = 0; y < this.height; y++) {
       for (let x = 0; x < this.width; x++) {
         ctx.fillStyle = this.map[y][x] ? "#aa66bb" : "#ddd";
+        ctx.globalAlpha = this.map[y][x] || 1;
         ctx.fillRect(x * cell_size, y * cell_size, cell_size, cell_size);
       }
     }
 
+    ctx.globalAlpha = 1;
     ctx.strokeStyle = "#000";
     for (let y = 0; y < this.height; y++) {
       ctx.beginPath();
