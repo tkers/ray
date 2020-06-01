@@ -5,8 +5,8 @@ const draw = (ctx, dt) => {
 
   grid.draw(ctx);
 
-  ctx.fillStyle = "#fef0ff";
-  ctx.fillRect(400, 0, 400, 400);
+  ctx.fillStyle = "#cbd";
+  ctx.fillRect(400, 200, 400, 200);
 
   player.update(dt);
   player.draw(ctx);

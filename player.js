@@ -179,7 +179,7 @@ class Player {
       ctx.stroke();
 
       ctx.globalAlpha = fog;
-      ctx.strokeStyle = "#fef0ff";
+      ctx.strokeStyle = "#fff";
       ctx.beginPath();
       ctx.moveTo(colX, colTop);
       ctx.lineTo(colX, colBottom);
