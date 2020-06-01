@@ -148,6 +148,7 @@ class Player {
       const ray_x = ray_hit[0] * 40;
       const ray_y = ray_hit[1] * 40;
 
+      ctx.strokeStyle = "#333";
       ctx.beginPath();
       ctx.moveTo(this.x, this.y);
       ctx.lineTo(ray_x, ray_y);
@@ -156,22 +157,29 @@ class Player {
       const ray_dist = ray_hit[2];
       const ray_shadow = ray_hit[4];
 
-      const fog = Math.max(0, 1 - ray_dist ** 2 / (ray_len - 1) ** 2);
+      const fog = Math.min(1, ray_dist ** 2 / (ray_len - 1) ** 2);
 
       const height = 400 / ray_dist;
       const colX = 400 + i;
       const colTop = 200 - height / 2;
       const colBottom = 200 + height / 2;
 
-      ctx.globalAlpha = fog;
+      ctx.globalAlpha = 1;
       ctx.strokeStyle = "#552277";
       ctx.beginPath();
       ctx.moveTo(colX, colTop);
       ctx.lineTo(colX, colBottom);
       ctx.stroke();
 
-      ctx.globalAlpha = (ray_shadow / 2) * fog;
+      ctx.globalAlpha = ray_shadow / 2;
       ctx.strokeStyle = "#000";
+      ctx.beginPath();
+      ctx.moveTo(colX, colTop);
+      ctx.lineTo(colX, colBottom);
+      ctx.stroke();
+
+      ctx.globalAlpha = fog;
+      ctx.strokeStyle = "#fef0ff";
       ctx.beginPath();
       ctx.moveTo(colX, colTop);
       ctx.lineTo(colX, colBottom);

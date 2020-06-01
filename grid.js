@@ -29,15 +29,14 @@ class Grid {
       }
     }
 
+    ctx.strokeStyle = "#000";
     for (let y = 0; y < this.map.length; y++) {
-      ctx.fillStyle = "#aaa";
       ctx.beginPath();
       ctx.moveTo(0, y * 40);
       ctx.lineTo(400, y * 40);
       ctx.stroke();
     }
     for (let x = 0; x < this.map[0].length; x++) {
-      ctx.fillStyle = "#aaa";
       ctx.beginPath();
       ctx.moveTo(x * 40, 0);
       ctx.lineTo(x * 40, 400);
