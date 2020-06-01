@@ -1,18 +1,18 @@
 class Player {
-  turnSpeed = deg2rad(360);
-  walkSpeed = 2.5;
-
-  x = 1.5;
-  y = 1.5;
-  angle = 0;
-
-  k_up = false;
-  k_down = false;
-  k_left = false;
-  k_right = false;
-
   constructor(grid) {
     this.grid = grid;
+
+    this.turnSpeed = deg2rad(360);
+    this.walkSpeed = 2.5;
+
+    this.x = 1.5;
+    this.y = 1.5;
+    this.angle = 0;
+
+    this.k_up = false;
+    this.k_down = false;
+    this.k_left = false;
+    this.k_right = false;
 
     window.addEventListener("keydown", e => {
       if (e.key === "ArrowUp") {

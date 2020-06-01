@@ -12,11 +12,10 @@ const default_map = [
 ];
 
 class Grid {
-  width = 10;
-  height = 10;
-
   constructor(map = default_map) {
     this.map = map;
+    this.width = 10;
+    this.height = 10;
   }
 
   getCell(x, y) {
