@@ -1,4 +1,4 @@
-const fov = 60;
+const focal_length = 2;
 const ray_len = 18;
 const fog_dist = ray_len - 2;
 
@@ -93,7 +93,7 @@ class Camera {
 
     for (let i = 0; i < screen_width; i++) {
       const a = (i * 2) / screen_width - 1;
-      const ray_angle = deg2rad(-fov / 2 + fov * (i / screen_width));
+      const ray_angle = Math.atan2(a, focal_length);
 
       const ray = this.cast(x, y, angle, ray_angle);
       const ray_hit = ray.find(s => s[3]) || ray[ray.length - 1];
