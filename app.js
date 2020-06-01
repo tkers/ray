@@ -2,18 +2,17 @@ const screen_height = 400;
 const screen_width = 400;
 const cell_size = 40;
 
-let grid, player;
+let grid, player, camera;
 
 const draw = (ctx, dt) => {
   // console.log({ dt: (dt * 1000).toFixed(0), fps: (1 / dt).toFixed(1) });
 
   grid.draw(ctx);
 
-  ctx.fillStyle = "#cbd";
-  ctx.fillRect(400, 200, 400, 200);
-
   player.update(dt);
   player.draw(ctx);
+
+  camera.draw(ctx, player.x, player.y, player.angle);
 };
 
 window.addEventListener("load", () => {
@@ -23,6 +22,7 @@ window.addEventListener("load", () => {
 
   grid = new Grid();
   player = new Player(grid);
+  camera = new Camera(grid);
 
   renderLoop(dt => {
     ctx.globalAlpha = 1;
