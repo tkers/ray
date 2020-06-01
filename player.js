@@ -1,4 +1,6 @@
-const ray_len = 1;
+const fov = 60;
+const fov_res = 16;
+const ray_len = 5;
 
 class Player {
   turnSpeed = deg2rad(360);
@@ -60,11 +62,15 @@ class Player {
     ctx.arc(this.x, this.y, 5, 0, deg2rad(360));
     ctx.fill();
 
-    const ray_x = this.x + Math.cos(this.angle) * ray_len * 40;
-    const ray_y = this.y + Math.sin(this.angle) * ray_len * 40;
-    ctx.beginPath();
-    ctx.moveTo(this.x, this.y);
-    ctx.lineTo(ray_x, ray_y);
-    ctx.stroke();
+    for (let i = 0; i < fov_res; i++) {
+      const a = (i * 2) / fov_res - 1;
+      const ray_angle = deg2rad(-fov / 2 + fov * (i / fov_res));
+      const ray_x = this.x + Math.cos(this.angle + ray_angle) * ray_len * 40;
+      const ray_y = this.y + Math.sin(this.angle + ray_angle) * ray_len * 40;
+      ctx.beginPath();
+      ctx.moveTo(this.x, this.y);
+      ctx.lineTo(ray_x, ray_y);
+      ctx.stroke();
+    }
   }
 }
