@@ -1,6 +1,7 @@
 const fov = 60;
 const fov_res = 400;
-const ray_len = 10;
+const ray_len = 18;
+const fog_dist = ray_len - 2;
 
 class Player {
   turnSpeed = deg2rad(360);
@@ -157,7 +158,7 @@ class Player {
       const ray_dist = ray_hit[2];
       const ray_shadow = ray_hit[4];
 
-      const fog = Math.min(1, ray_dist ** 2 / (ray_len - 1) ** 2);
+      const fog = Math.min(1, ray_dist ** 2 / fog_dist ** 2);
 
       const height = 400 / ray_dist;
       const colX = 400 + i;
