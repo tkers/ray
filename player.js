@@ -56,6 +56,67 @@ class Player {
     this.y = Math.min(Math.max(0, this.y), 400);
   }
 
+  cast(relativeAngle) {
+    const angle = this.angle + relativeAngle;
+
+    const cos = Math.cos(angle);
+    const sin = Math.sin(angle);
+
+    const hDir = cos > 0 ? 1 : cos < 0 ? -1 : 0;
+    const vDir = sin > 0 ? 1 : sin < 0 ? -1 : 0;
+
+    const hRound = hDir > 0 ? Math.floor : Math.ceil;
+    const vRound = vDir > 0 ? Math.floor : Math.ceil;
+
+    const path = [];
+    let nowX = this.x / 40;
+    let nowY = this.y / 40;
+    let nowDist = 0;
+
+    while (true) {
+      //  next horizontal grid intersect
+      let hStepX, hStepY;
+      let hStepDist = Infinity;
+      if (hDir !== 0) {
+        hStepX = hRound(nowX + hDir) - nowX;
+        hStepY = hStepX * (sin / cos);
+        hStepDist = Math.sqrt(hStepX ** 2 + hStepY ** 2);
+      }
+
+      // next vertical grid intersect
+      let vStepX, vStepY;
+      let vStepDist = Infinity;
+      if (vDir !== 0) {
+        vStepY = vRound(nowY + vDir) - nowY;
+        vStepX = vStepY * (cos / sin);
+        vStepDist = Math.sqrt(vStepX ** 2 + vStepY ** 2);
+      }
+
+      // closest grid intersect
+      let stepX, stepY, stepDist;
+      if (hStepDist < vStepDist) {
+        stepX = hStepX;
+        stepY = hStepY;
+        stepDist = hStepDist;
+      } else {
+        stepX = vStepX;
+        stepY = vStepY;
+        stepDist = vStepDist;
+      }
+
+      nowX += stepX;
+      nowY += stepY;
+      nowDist += stepDist;
+
+      // done when max distance is reached
+      if (nowDist > ray_len) break;
+
+      path.push([nowX, nowY]);
+    }
+
+    return path;
+  }
+
   draw(ctx) {
     ctx.fillStyle = "#3366aa";
     ctx.beginPath();
@@ -65,6 +126,15 @@ class Player {
     for (let i = 0; i < fov_res; i++) {
       const a = (i * 2) / fov_res - 1;
       const ray_angle = deg2rad(-fov / 2 + fov * (i / fov_res));
+
+      const ray = this.cast(ray_angle);
+      ray.forEach(([sx, sy, dist, hit]) => {
+        ctx.fillStyle = hit ? "#f0a" : "#aa2288";
+        ctx.beginPath();
+        ctx.arc(sx * 40, sy * 40, 2, 0, deg2rad(360));
+        ctx.fill();
+      });
+
       const ray_x = this.x + Math.cos(this.angle + ray_angle) * ray_len * 40;
       const ray_y = this.y + Math.sin(this.angle + ray_angle) * ray_len * 40;
       ctx.beginPath();
