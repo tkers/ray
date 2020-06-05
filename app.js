@@ -2,7 +2,7 @@ const screen_height = 400;
 const screen_width = 400;
 const cell_size = 40;
 
-let grid, player, camera, wall;
+let grid, player, camera, wall, sky;
 
 const draw = (ctx, dt) => {
   // console.log({ dt: (dt * 1000).toFixed(0), fps: (1 / dt).toFixed(1) });
@@ -12,7 +12,7 @@ const draw = (ctx, dt) => {
   player.update(dt);
   player.draw(ctx);
 
-  camera.draw(ctx, player.x, player.y, player.angle);
+  camera.draw(ctx, player.x, player.y, normalise(player.angle));
 };
 
 window.addEventListener("load", () => {
@@ -21,6 +21,7 @@ window.addEventListener("load", () => {
   resizeCanvas(canvas, 800, 400);
 
   wall = new Texture("wall.png");
+  sky = new Texture("sky.png");
   grid = new Grid();
   player = new Player(grid);
   camera = new Camera(grid);

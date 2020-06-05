@@ -100,6 +100,9 @@ class Camera {
       screen_height / 2
     );
 
+    //draw sky
+    sky.drawSky(ctx, angle, 400, 200);
+
     for (let i = 0; i < screen_width; i++) {
       const a = (i * 2) / screen_width - 1;
       const ray_angle = Math.atan2(a, focal_length);
