@@ -49,19 +49,21 @@ class Camera {
       let stepX, stepY, stepDist;
       let gridOffX = 0;
       let gridOffY = 0;
-      let shadow;
+      let shadow, offset;
       if (hStepDist < vStepDist) {
         stepX = hStepX;
         stepY = hStepY;
         stepDist = hStepDist;
         gridOffX = hDir < 0 ? 1 : 0;
         shadow = hDir < 0 ? 1 : 0.3;
+        offset = (nowY + hStepY) % 1;
       } else {
         stepX = vStepX;
         stepY = vStepY;
         stepDist = vStepDist;
         gridOffY = vDir < 0 ? 1 : 0;
         shadow = vDir < 0 ? 1 : 0.6;
+        offset = (nowX + vStepX) % 1;
       }
 
       nowX += stepX;
@@ -75,7 +77,14 @@ class Camera {
       const gridY = Math.floor(nowY - gridOffY);
       const hit = this.grid.getCell(gridX, gridY);
 
-      path.push([nowX, nowY, nowDist * Math.cos(relativeAngle), hit, shadow]);
+      path.push([
+        nowX,
+        nowY,
+        nowDist * Math.cos(relativeAngle),
+        hit,
+        offset,
+        shadow
+      ]);
     }
 
     return path;
@@ -100,6 +109,7 @@ class Camera {
       const ray_x = ray_hit[0];
       const ray_y = ray_hit[1];
 
+      // show rays on 2d view
       if (i % 10 === 0) {
         ctx.strokeStyle = "#333";
         ctx.beginPath();
@@ -109,22 +119,17 @@ class Camera {
       }
 
       const ray_dist = ray_hit[2];
-      const ray_shadow = ray_hit[4];
-
-      const fog = Math.min(1, ray_dist ** 2 / fog_dist ** 2);
+      const ray_offset = ray_hit[4];
+      const ray_shadow = ray_hit[5];
 
       const height = screen_height / ray_dist;
       const colX = xoffset_3d + i;
-      const colTop = screen_height / 2 - height / 2;
       const colBottom = screen_height / 2 + height / 2;
+      const colTop = colBottom - height;
 
-      ctx.globalAlpha = 1;
-      ctx.strokeStyle = "#552277";
-      ctx.beginPath();
-      ctx.moveTo(colX, colTop);
-      ctx.lineTo(colX, colBottom);
-      ctx.stroke();
+      wall.drawWall(ctx, colX, colTop, 1, height, ray_offset);
 
+      // shadow
       ctx.globalAlpha = ray_shadow / 2;
       ctx.strokeStyle = "#000";
       ctx.beginPath();
@@ -132,7 +137,8 @@ class Camera {
       ctx.lineTo(colX, colBottom);
       ctx.stroke();
 
-      ctx.globalAlpha = fog;
+      // fog
+      ctx.globalAlpha = Math.min(1, ray_dist ** 2 / fog_dist ** 2);
       ctx.strokeStyle = "#fff";
       ctx.beginPath();
       ctx.moveTo(colX, colTop);
