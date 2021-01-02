@@ -19,6 +19,7 @@ const resizeCanvas = function(canvas, width, height) {
   canvas.style.width = `${width}px`;
   canvas.style.height = `${height}px`;
   ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+  ctx.imageSmoothingEnabled = false;
   return canvas;
 };
 
